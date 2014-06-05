@@ -34,10 +34,24 @@ If `extAccept` is used, `extIgnore` content is ignored.
 Result exemple :
 
     [
-        { path: './test/', name: '', ext: 'htaccess' },
-        { path: './test/', name: 'noext', ext: '' },
-        { path: './test/', name: 'toto', ext: 'jpg' },
-        { path: './test/subfolder/', name: 'film.vo.team-yo', ext: 'mkv' }
+        { path: './test/', name: '', ext: 'htaccess', size:'850' },
+        { path: './test/', name: 'noext', ext: '', size:'1642' },
+        { path: './test/', name: 'toto', ext: 'jpg', size:'3145728' },
+        { path: './test/subfolder/', name: 'film.vo.team-yo', ext: 'mkv', size:'734003200'}
     ]
 
+Where :
+
+* `path` : parent folder of file.
+* `name` : file name (without extention).
+* `ext` : file extention.
+* `size` : file size in byte.
+
 **NOTE : Package in work**
+
+Versions
+=========
+
+**v 0.0.5 - 2014/06/05**
+
+* Add size in result.
