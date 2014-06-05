@@ -1,0 +1,27 @@
+{
+  "name": "folder-contents",
+  "version": "0.0.4",
+  "description": "Get list of files recursively in the specified folder with options",
+  "main": "./lib/app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": {
+    "name": "bdream",
+    "email": "npm.bdream@gmail.com"
+  },
+  "keywords": [
+    "folder",
+    "dir",
+    "content",
+    "recursive",
+    "list",
+    "json",
+    "file",
+    "extention",
+    "name",
+    "path"
+  ],
+  "license": "",
+  "dependencies": {}
+}
