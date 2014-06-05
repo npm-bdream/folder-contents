@@ -2,6 +2,7 @@
   "name": "folder-contents",
   "version": "0.0.4",
   "description": "Get list of files recursively in the specified folder with options",
+  "homepage": "https://github.com/npm-bdream/folder-contents",
   "main": "./lib/app.js",
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
