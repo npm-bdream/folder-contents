@@ -33,6 +33,10 @@ Get list of files recursively in the specified folder with options
 **defaults :**
 * `path` : **' . '** (folder where we want to list files . is equal to ./ )
 * `extSep` : **' . '** (extention separator 'toto.jpg')
+* `resultJsonStruct` : **'list'**
+    * `list` : build simple json list with files.(fast)
+    * `ext` : build list by extension.(fast)
+    * `path` : build complex list based on path (More operations)
 * `extIgnore` : **[ ]** (list of extentions to ignore ['jpg',...], is case insensitive)
 * `extAccept` : **[ ]** (list of extentions to accept ['mkv',...], is case insensitive )
 * `folderIgnore` : **[ ]** (list of folder to ignore ['.svn',...], is case sensitive )
@@ -116,6 +120,146 @@ If `extAccept` is used, `extIgnore` content is ignored.
         { path: './test/', name: 'toto', ext: 'JPG', size: '2.63 mo' }
     ]
 
+**Example 04 : use resultJsonStruct `path` **
+
+    var options = {
+        "path":"./test",
+        "resultJsonStruct":"path"
+    };
+    var jsonFileList = fcs.getFilesList(options);
+    console.log(JSON.stringify(jsonFileList));
+
+    // Log result :
+    {
+        ".": {
+            "test": {
+                ".files": [
+                    {
+                        "path": "./test/",
+                        "name": "",
+                        "ext": "htaccess",
+                        "size": 421
+                    },
+                    {
+                        "path": "./test/",
+                        "name": "index",
+                        "ext": "html",
+                        "size": 1422
+                    },
+                    {
+                        "path": "./test/",
+                        "name": "manifest",
+                        "ext": "plist",
+                        "size": 726
+                    },
+                    {
+                        "path": "./test/",
+                        "name": "noExtFile",
+                        "ext": "",
+                        "size": 0
+                    },
+                    {
+                        "path": "./test/",
+                        "name": "release",
+                        "ext": "docx",
+                        "size": 17233
+                    },
+                    {
+                        "path": "./test/",
+                        "name": "toto",
+                        "ext": "JPG",
+                        "size": 2760113
+                    }
+                ],
+                "subfolder": {
+                    ".files": [
+                        {
+                            "path": "./test/subfolder/",
+                            "name": "film.vostvo.team-yo",
+                            "ext": "mkv",
+                            "size": 703836104
+                        }
+                    ]
+                }
+            }
+        }
+    }
+
+    console.log(JSON.stringify(jsonFileList['.']['test']['subfolder']['.files']));
+
+    // Log result :
+
+    [
+        {
+            "path": "./test/subfolder/",
+            "name": "film.vostvo.team-yo",
+            "ext": "mkv",
+            "size": 703836104
+        }
+    ]
+
+
+**Example 05 : use resultJsonStruct `ext` **
+
+    var options = {
+        "path":"./test",
+        "resultJsonStruct":"ext",
+        "extIgnore":["jpg"]
+    };
+    var jsonFileList = fcs.getFilesList(options);
+    console.log(JSON.stringify(jsonFileList));
+
+    // Log result :
+    {
+        "htaccess": [
+            {
+                "path": "./test/",
+                "name": "",
+                "ext": "htaccess",
+                "size": 421
+            }
+        ],
+        "html": [
+            {
+                "path": "./test/",
+                "name": "index",
+                "ext": "html",
+                "size": 1422
+            }
+        ],
+        "plist": [
+            {
+                "path": "./test/",
+                "name": "manifest",
+                "ext": "plist",
+                "size": 726
+            }
+        ],
+        "": [
+            {
+                "path": "./test/",
+                "name": "noExtFile",
+                "ext": "",
+                "size": 0
+            }
+        ],
+        "docx": [
+            {
+                "path": "./test/",
+                "name": "release",
+                "ext": "docx",
+                "size": 17233
+            }
+        ],
+        "mkv": [
+            {
+                "path": "./test/subfolder/",
+                "name": "film.vostvo.team-yo",
+                "ext": "mkv",
+                "size": 703836104
+            }
+        ]
+    }
 
 **Where :**
 
@@ -127,6 +271,11 @@ If `extAccept` is used, `extIgnore` content is ignored.
 
 Versions
 =========
+
+**v 0.0.9 - 2014/06/07**
+
+* Add resultJsonStruct option
+* Optimizing options initialization.
 
 **v 0.0.8 - 2014/06/06**
 
