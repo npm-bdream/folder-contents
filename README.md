@@ -52,6 +52,10 @@ Where :
 Versions
 =========
 
+**v 0.0.6 - 2014/06/06**
+
+* sire is now displayable, using package bytes-i18n
+
 **v 0.0.5 - 2014/06/05**
 
 * Add size in result.
