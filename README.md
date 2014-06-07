@@ -32,25 +32,24 @@ Get list of files recursively in the specified folder with options
 
 **defaults :**
 * `path` : **' . '** (folder where we want to list files . is equal to ./ )
-* `extSep` : **' . '** (extention separator 'toto.jpg')
+* `extSep` : **' . '** (extension separator 'toto.jpg')
 * `resultJsonStruct` : **'list'**
     * `list` : build simple json list with files.(fast)
     * `ext` : build list by extension.(fast)
     * `path` : build complex list based on path (More operations)
-* `extIgnore` : **[ ]** (list of extentions to ignore ['jpg',...], is case insensitive)
-* `extAccept` : **[ ]** (list of extentions to accept ['mkv',...], is case insensitive )
+* `extIgnore` : **[ ]** (list of extension to ignore ['jpg',...], is case insensitive)
+* `extAccept` : **[ ]** (list of extension to accept ['mkv',...], is case insensitive )
 * `folderIgnore` : **[ ]** (list of folder to ignore ['.svn',...], is case sensitive )
 * `fileIgnore` : **[ ]** (list of file to ignore ['toto',...] for 'toto.jpg', , is case sensitive )
+* `fullPath` : **false** (if enabled, result contain `fpath`. Is full file path )
+* `dates` : **false** (if enabled, result contain timestamp for `atime`,`ctime` and `mtime`)
+* `dateFormat` : (format `atime`/`ctime`/`mtime` instead of timestamp)
+    * See [npm dateformat package][1] for patterns, can be "yyyy/mm/dd - HH:MM:ss" for example
 * `sizeFormatting` : **false** (Easy reading by the user but approximate value. If `false`, return real value in bytes)
-* `sizeI18n` : (If you want translate byte unit) Five units are needed if used.
+* `sizeI18n` : (If you want translate byte unit) Five units are needed to define if used :
+    * `b` `kb` `mb` `gb` `tb`
 
-        {
-            "b":"b",
-            "kb":"kb",
-            "mb":"mb",
-            "gb":"gb",
-            "tb":"tb"
-        }
+       
 
 If `extAccept` is used, `extIgnore` content is ignored.
 
@@ -93,7 +92,34 @@ If `extAccept` is used, `extIgnore` content is ignored.
         { path: './test/', name: 'toto', ext: 'JPG', size: '2.63mb' }
     ]
 
-**Example 03 : exclude mkv extention and translate byte unit for french customers**
+**Example 03 : Allow full path and dates, we choose date format**
+
+    var options = {
+        "path":"./test",
+        "sizeFormatting":true
+        "fullPath":true,
+        "dates":true,
+        "extAccept":["mkv"],
+        "dateFormat":"yyyy/mm/dd - HH:MM:ss"
+    };
+    var jsonFileList = fcs.getFilesList(options);
+    console.log(jsonFileList);
+
+    // Log result :
+    [ 
+        {   
+            path: './test/subfolder/',
+            name: 'film.vostvo.team-yo',
+            ext: 'mkv',
+            size: '85b',
+            fpath: './test/subfolder/film.vostvo.team-yo.mkv',
+            atime: '2014/06/07 - 23:54:11',
+            mtime: '2014/06/07 - 23:54:11',
+            ctime: '2014/06/06 - 23:06:35' 
+        } 
+    ]
+
+**Example 04 : exclude mkv extension and translate byte unit for french customers**
 
     var options = {
         "path":"./test",
@@ -120,7 +146,7 @@ If `extAccept` is used, `extIgnore` content is ignored.
         { path: './test/', name: 'toto', ext: 'JPG', size: '2.63 mo' }
     ]
 
-**Example 04 : use resultJsonStruct `path` **
+**Example 05 : use resultJsonStruct `path`**
 
     var options = {
         "path":"./test",
@@ -199,7 +225,7 @@ If `extAccept` is used, `extIgnore` content is ignored.
     ]
 
 
-**Example 05 : use resultJsonStruct `ext` **
+**Example 06 : use resultJsonStruct `ext`**
 
     var options = {
         "path":"./test",
@@ -261,20 +287,31 @@ If `extAccept` is used, `extIgnore` content is ignored.
         ]
     }
 
-**Where :**
+**Where in file result :**
 
 * `path` : parent folder of file.
-* `name` : file name (without extention).
-* `ext` : file extention.
+* `name` : file name (without extension).
+* `ext` : file extension.
 * `size` : file size.
+* `fpath` : parent folder, full file name and extension.
+* `atime` : see [Linux info page][2]
+* `ctime` : see [Linux info page][2]
+* `mtime` : see [Linux info page][2]
 
 
 Versions
 =========
 
+**v 0.1.0 - 2014/06/08**
+
+* Add file dates : atime, ctime, mtime (timestamp).
+* Date added if `dates` option is enabled.
+* Date is formatted if `dateFormat` option is configured.
+* Add file full path : fpath, enabled if `fullPath` option is enabled.
+
 **v 0.0.9 - 2014/06/07**
 
-* Add resultJsonStruct option
+* Add resultJsonStruct option.
 * Optimizing options initialization.
 
 **v 0.0.8 - 2014/06/06**
@@ -285,8 +322,12 @@ Versions
 
 **v 0.0.6 - 2014/06/06**
 
-* sire is now displayable, using package bytes-i18n
+* Size is now displayable, using package bytes-i18n
 
 **v 0.0.5 - 2014/06/05**
 
 * Add size in result.
+
+
+  [1]: https://www.npmjs.org/package/dateformat
+  [2]: http://www.linux-faqs.info/general/difference-between-mtime-ctime-and-atime
