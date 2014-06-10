@@ -3,158 +3,382 @@
 **folder-contents**
 ===================
 
-Get list of files recursively in the specified folder with options
+List the contents of a folder recursively or not. Use the options.
 
 **Usage**
 =========
 
-    var fcs = require('folder-contents');
+With options
+
+    var folderContents = require('folder-contents');
 
     var options = {
-        "path":"./your-folder-name",
-        "extSep":".",
-        "extIgnore":[],
-        "extAccept":[],
-        "folderIgnore":[],
-        "fileIgnore":[],
-        "sizeFormatting":false,
-        "sizeI18n":{
-            "b":"b",
-            "kb":"kb",
-            "mb":"mb",
-            "gb":"gb",
-            "tb":"tb"
+        "path":".",
+        "separator":".",
+        "recursively":false,
+        "method":"simple",
+        "filter":{
+            "extensionIgnore":[],
+            "extensionAccept":[],
+            "folderIgnore":[],
+            "fileIgnore":[]
         }
+        "date":true, // See doc for patterns and i18n
+        "size":true, // See doc for patterns and i18n
+        "useFullPath":false
     };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(jsonFileList);
+    var jsonResult = folderContents(options);
+    // console.log(jsonResult);
+    // console.log(JSON.stringify(jsonResult));
 
+Without options
 
-**defaults :**
-* `path` : **' . '** (folder where we want to list files . is equal to ./ )
-* `extSep` : **' . '** (extension separator 'toto.jpg')
-* `resultJsonStruct` : **'list'**
-    * `list` : build simple json list with files.(fast)
-    * `ext` : build list by extension.(fast)
-    * `path` : build complex list based on path (More operations)
-* `extIgnore` : **[ ]** (list of extension to ignore ['jpg',...], is case insensitive)
-* `extAccept` : **[ ]** (list of extension to accept ['mkv',...], is case insensitive )
-* `folderIgnore` : **[ ]** (list of folder to ignore ['.svn',...], is case sensitive )
-* `fileIgnore` : **[ ]** (list of file to ignore ['toto',...] for 'toto.jpg', , is case sensitive )
-* `fullPath` : **false** (if enabled, result contain `fpath`. Is full file path )
-* `dates` : **false** (if enabled, result contain timestamp for `atime`,`ctime` and `mtime`)
-* `dateFormat` : (format `atime`/`ctime`/`mtime` instead of timestamp)
-    * See [npm dateformat package][1] for patterns, can be "yyyy/mm/dd - HH:MM:ss" for example
-* `sizeFormatting` : **false** (Easy reading by the user but approximate value. If `false`, return real value in bytes)
-* `sizeI18n` : (If you want translate byte unit) Five units are needed to define if used :
-    * `b` `kb` `mb` `gb` `tb`
+    var folderContents = require('folder-contents');
+    // console.log(folderContents());
 
-       
+Details for options
+------------------
 
-If `extAccept` is used, `extIgnore` content is ignored.
+**`path` :** *( string )* 
 
-**Example 01 : simple usage**
+* default path is **`./`** (don't add last **`/`** if you use this option).
 
-    var options = {
-        "path":"./test"
-    };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(jsonFileList);
+**`separator` :** *( string )*
 
-    // Log result :
-    [
-        { path: './test/', name: '', ext: 'htaccess', size: 421 },
-        { path: './test/', name: 'index', ext: 'html', size: 1422 },
-        { path: './test/', name: 'manifest', ext: 'plist', size: 726 },
-        { path: './test/', name: 'noExtFile', ext: '', size: 0 },
-        { path: './test/', name: 'release', ext: 'docx', size: 17233 },
-        { path: './test/subfolder/', name: 'film.vostvo.team-yo', ext: 'mkv', size: 703836104 },
-        { path: './test/', name: 'toto', ext: 'JPG', size: 2760113 }
-    ]
+* default extension separator is **`.`**
 
-**Example 02 : format file size**
+**`recursively` :** *( bool )*
 
-    var options = {
-        "path":"./test",
-        "sizeFormatting":true
-    };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(jsonFileList);
+* default to **`false`**. If set at **`true`** list recursively files for all subsolder levels.
 
-    // Log result :
-    [
-        { path: './test/', name: '', ext: 'htaccess', size: '421b' },
-        { path: './test/', name: 'index', ext: 'html', size: '1.39kb' },
-        { path: './test/', name: 'manifest', ext: 'plist', size: '726b' },
-        { path: './test/', name: 'noExtFile', ext: '', size: '0b' },
-        { path: './test/', name: 'release', ext: 'docx', size: '16.83kb' },
-        { path: './test/subfolder/', name: 'film.vostvo.team-yo', ext: 'mkv', size: '671.23mb' },
-        { path: './test/', name: 'toto', ext: 'JPG', size: '2.63mb' }
-    ]
+**`method` :** *( string )*
+    
+* `simple` : return simple json list with files. (is default)
+* `simpleExtension` : return simple json object with list(s) of file(s) by extension.
+* `simplePath` : return simple json object with list(s) of file(s) by folder.
+* `complexPath` : return complex json structure based on path (More operations).
 
-**Example 03 : Allow full path and dates, we choose date format**
+**`filter.extensionIgnore`** : *( JSON.[ ] )* 
 
-    var options = {
-        "path":"./test",
-        "sizeFormatting":true
-        "fullPath":true,
-        "dates":true,
-        "extAccept":["mkv"],
-        "dateFormat":"yyyy/mm/dd - HH:MM:ss"
-    };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(jsonFileList);
+* List of extension *( string )* to ignore.
+* IS CASE INSENSITIVE.
+* If **`filter.extensionAccept`** is used, **`filter.extensionIgnore`** is ignored ;p
 
-    // Log result :
-    [ 
-        {   
-            path: './test/subfolder/',
-            name: 'film.vostvo.team-yo',
-            ext: 'mkv',
-            size: '85b',
-            fpath: './test/subfolder/film.vostvo.team-yo.mkv',
-            atime: '2014/06/07 - 23:54:11',
-            mtime: '2014/06/07 - 23:54:11',
-            ctime: '2014/06/06 - 23:06:35' 
-        } 
-    ]
+**`filter.extensionAccept`** : *( JSON.[ ] )* 
 
-**Example 04 : exclude mkv extension and translate byte unit for french customers**
+* List of extension *( string )* to accept.
+* IS CASE INSENSITIVE.
 
-    var options = {
-        "path":"./test",
-        "sizeFormatting":true,
-        "extIgnore":["mKV"],
-        "sizeI18n":{
-            "b":" o",
-            "kb":" ko",
-            "mb":" mo",
-            "gb":" go",
-            "tb":" to"
+**`filter.folderIgnore`** *( JSON.[ ] )* 
+
+* List of folder name *( string )* to ignore.
+* Is case sensitive.
+
+**`filter.fileIgnore`** *( JSON.[ ] )*
+
+* List of file name *( string )* to ignore. 
+* Is case sensitive.
+* Add names without extensions.
+
+**`date :`** *( bool | string )*
+
+* Default date value is **`true`**. Return timestamp for `atime`,`ctime` and `mtime` in json result.
+* If you don't want dates in json result, set this value to **`false`**.
+* If you want formated dates set a string (See [npm dateformat package][1] for patterns).
+Exemple date string format : **`"yyyy/mm/dd - HH:MM:ss"`**
+For `atime`,`ctime` and `mtime` please see : [Linux info page][2]
+
+**`size :`** *( bool | JSON.{ } )*
+
+* default size value is `true`, return size in byte for each files.
+* If you don't want size in json result, set this value to **`false`**.
+* If you want formated size use this json object :
+    
+        {
+           "b":"b or B or o(for french) or what you want ...",
+           "kb":"kb",
+           "mb":"mb",
+           "gb":"gb",
+           "tb":"tb"
         }
+
+* see [npm bytes-i18n package][3]
+
+**`useFullPath` :** *( bool )* 
+
+* default to false, if set to true `fpath` value is added for each files.
+
+**Examples**
+=========
+
+For examples I use these files and my js app is in **`./`** folder :
+    
+    ./test/.htaccess
+    ./test/photo.JPG
+    ./test/subfolder/film.mkv
+
+Examples for basic config
+-------------------------
+
+**Example A1 : default result for `simple methode`** (not recursive)
+
+In this exemple, options are sames because we don't use recursivity
+
+* default methode is `simple` 
+* `complexPath` is set to `simple` when `recursively` is not defined or false.
+* `simplePath` is set to `simple` when `recursively` is not defined or false.
+
+        var folderContents = require('folder-contents');
+        
+        var options = {
+            "path":"./test"
+        };
+        
+        options = {
+            "path":"./test",
+            "method":"simple"
+        };
+        
+        options = {
+            "path":"./test",
+            "method":"simplePath"
+        };
+        
+        options = {
+            "path":"./test",
+            "method":"complexPath"
+        };
+        
+        var result = folderContents(options);
+        console.log(JSON.stringify(result));
+        
+        // Log result :
+        {
+            ".files": [
+                {
+                    "path": "./test/",
+                    "name": "",
+                    "ext": "htaccess",
+                    "size": 421,
+                    "atime": 1402061211000,
+                    "mtime": 1402061211000,
+                    "ctime": 1402061200000
+                },
+                {
+                    "path": "./test/",
+                    "name": "photo",
+                    "ext": "JPG",
+                    "size": 2760113,
+                    "atime": 1402061374000,
+                    "mtime": 1216722663000,
+                    "ctime": 1402061374000
+                }
+            ],
+            ".folders": [
+                "subfolder"
+            ]
+        }
+    
+**Example A2 : default result for `simpleExtension methode`** (not recursive)
+    
+    var folderContents = require('folder-contents');
+    
+    options = {
+        "path":"./test",
+        "method":"simpleExtension"
     };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(jsonFileList);
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    {
+        "htaccess": [
+            {
+                "path": "./test/",
+                "name": "",
+                "ext": "htaccess",
+                "size": 421,
+                "atime": 1402061211000,
+                "mtime": 1402061211000,
+                "ctime": 1402061200000
+            }
+        ],
+        "JPG": [
+            {
+                "path": "./test/",
+                "name": "photo",
+                "ext": "JPG",
+                "size": 2760113,
+                "atime": 1402061374000,
+                "mtime": 1216722663000,
+                "ctime": 1402061374000
+            }
+        ],
+        ".folders": [
+            "subfolder"
+        ]
+    }
 
-    // Log result :
-    [
-        { path: './test/', name: '', ext: 'htaccess', size: '421 o' },
-        { path: './test/', name: 'index', ext: 'html', size: '1.39 ko' },
-        { path: './test/', name: 'manifest', ext: 'plist', size: '726 o' },
-        { path: './test/', name: 'noExtFile', ext: '', size: '0 o' },
-        { path: './test/', name: 'release', ext: 'docx', size: '16.83 ko' },
-        { path: './test/', name: 'toto', ext: 'JPG', size: '2.63 mo' }
-    ]
 
-**Example 05 : use resultJsonStruct `path`**
+Examples for recursive config
+-----------------------------
+
+
+
+**Example B1 : default result for `simple methode`**
+
+    var folderContents = require('folder-contents');
 
     var options = {
         "path":"./test",
-        "resultJsonStruct":"path"
+        "recursively":true
     };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(JSON.stringify(jsonFileList));
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    // Log result :
+    [
+        {
+            "path": "./test/",
+            "name": "",
+            "ext": "htaccess",
+            "size": 421,
+            "atime": 1402061211000,
+            "mtime": 1402061211000,
+            "ctime": 1402061200000
+        },
+        {
+            "path": "./test/",
+            "name": "photo",
+            "ext": "JPG",
+            "size": 2760113,
+            "atime": 1402061374000,
+            "mtime": 1216722663000,
+            "ctime": 1402061374000
+        },
+        {
+            "path": "./test/subfolder/",
+            "name": "film",
+            "ext": "mkv",
+            "size": 703836104,
+            "atime": 1402061717000,
+            "mtime": 1369822031000,
+            "ctime": 1402061717000
+        }
+    ]
 
+**Example B2 : default result for `simpleExtension methode`**
+
+    var folderContents = require('folder-contents');
+
+    var options = {
+        "path":"./test",
+        "method":"simpleExtension",
+        "recursively":true
+    };
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    // Log result :
+    {
+        "htaccess": [
+            {
+                "path": "./test/",
+                "name": "",
+                "ext": "htaccess",
+                "size": 421,
+                "atime": 1402061211000,
+                "mtime": 1402061211000,
+                "ctime": 1402061200000
+            }
+        ],
+        "JPG": [
+            {
+                "path": "./test/",
+                "name": "photo",
+                "ext": "JPG",
+                "size": 2760113,
+                "atime": 1402061374000,
+                "mtime": 1216722663000,
+                "ctime": 1402061374000
+            }
+        ],
+        "mkv": [
+            {
+                "path": "./test/subfolder/",
+                "name": "film",
+                "ext": "mkv",
+                "size": 703836104,
+                "atime": 1402061717000,
+                "mtime": 1369822031000,
+                "ctime": 1402061717000
+            }
+        ]
+    }
+
+**Example B3 : default result for `simplePath methode`**
+
+    var folderContents = require('folder-contents');
+
+    var options = {
+        "path":"./test",
+        "method":"simplePath",
+        "recursively":true
+    };
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    // Log result :
+    {
+        "./test/": [
+            {
+                "path": "./test/",
+                "name": "",
+                "ext": "htaccess",
+                "size": 421,
+                "atime": 1402061211000,
+                "mtime": 1402061211000,
+                "ctime": 1402061200000
+            },
+            {
+                "path": "./test/",
+                "name": "photo",
+                "ext": "JPG",
+                "size": 2760113,
+                "atime": 1402061374000,
+                "mtime": 1216722663000,
+                "ctime": 1402061374000
+            }
+        ],
+        "./test/subfolder/": [
+            {
+                "path": "./test/subfolder/",
+                "name": "film",
+                "ext": "mkv",
+                "size": 703836104,
+                "atime": 1402061717000,
+                "mtime": 1369822031000,
+                "ctime": 1402061717000
+            }
+        ]
+    }
+
+**Example B4 : default result for `complexPath methode`**
+
+    var folderContents = require('folder-contents');
+
+    var options = {
+        "path":"./test",
+        "method":"complexPath",
+        "recursively":true
+    };
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
     // Log result :
     {
         ".": {
@@ -164,46 +388,31 @@ If `extAccept` is used, `extIgnore` content is ignored.
                         "path": "./test/",
                         "name": "",
                         "ext": "htaccess",
-                        "size": 421
+                        "size": 421,
+                        "atime": 1402061211000,
+                        "mtime": 1402061211000,
+                        "ctime": 1402061200000
                     },
                     {
                         "path": "./test/",
-                        "name": "index",
-                        "ext": "html",
-                        "size": 1422
-                    },
-                    {
-                        "path": "./test/",
-                        "name": "manifest",
-                        "ext": "plist",
-                        "size": 726
-                    },
-                    {
-                        "path": "./test/",
-                        "name": "noExtFile",
-                        "ext": "",
-                        "size": 0
-                    },
-                    {
-                        "path": "./test/",
-                        "name": "release",
-                        "ext": "docx",
-                        "size": 17233
-                    },
-                    {
-                        "path": "./test/",
-                        "name": "toto",
+                        "name": "photo",
                         "ext": "JPG",
-                        "size": 2760113
+                        "size": 2760113,
+                        "atime": 1402061374000,
+                        "mtime": 1216722663000,
+                        "ctime": 1402061374000
                     }
                 ],
                 "subfolder": {
                     ".files": [
                         {
                             "path": "./test/subfolder/",
-                            "name": "film.vostvo.team-yo",
+                            "name": "film",
                             "ext": "mkv",
-                            "size": 703836104
+                            "size": 703836104,
+                            "atime": 1402061717000,
+                            "mtime": 1369822031000,
+                            "ctime": 1402061717000
                         }
                     ]
                 }
@@ -211,96 +420,151 @@ If `extAccept` is used, `extIgnore` content is ignored.
         }
     }
 
-    console.log(JSON.stringify(jsonFileList['.']['test']['subfolder']['.files']));
+Now you can find **`./test`** files like this :
+    
+    result['.']['test']['.files']
+    
+Use folder **`./test/subfolder`** :
 
-    // Log result :
+    result['.']['test']['subfolder']
 
-    [
-        {
-            "path": "./test/subfolder/",
-            "name": "film.vostvo.team-yo",
-            "ext": "mkv",
-            "size": 703836104
-        }
-    ]
+And **`./test/subfolder`** file(s) :
+
+    result['.']['test']['subfolder']['.files']
 
 
-**Example 06 : use resultJsonStruct `ext`**
+Examples for dates / size / filter and fpath
+-----------------------------
 
+**Example C1 : use `filter.extensionIgnore` and `useFullPath`**
+
+You can see fpath value in json result and `jpg` file in no longer returned.
+
+    var folderContents = require('folder-contents');
+    
     var options = {
         "path":"./test",
-        "resultJsonStruct":"ext",
-        "extIgnore":["jpg"]
+        "filter":{
+            "extensionIgnore":['jpg']
+        },
+        "useFullPath": true
     };
-    var jsonFileList = fcs.getFilesList(options);
-    console.log(JSON.stringify(jsonFileList));
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    // Log result :
+    {
+    ".files": [
+        {
+            "path": "./test/",
+            "name": "",
+            "ext": "htaccess",
+            "fpath": "./test/.htaccess",
+            "size": 421,
+            "atime": 1402061211000,
+            "mtime": 1402061211000,
+            "ctime": 1402061200000
+        }
+    ],
+    ".folders": [
+        "subfolder"
+    ]
+}
+
+**Example C2 : use `size` and `date` to false**
+
+Case for minimum informations
+
+    var folderContents = require('folder-contents');
+    
+    var options = {
+        "path":"./test",
+        "date":false,
+        "size": false
+    };
+    
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
+    
+    // Log result :
+    {
+        ".files": [
+            {
+                "path": "./test/",
+                "name": "",
+                "ext": "htaccess"
+            },
+            {
+                "path": "./test/",
+                "name": "photo",
+                "ext": "JPG"
+            }
+        ],
+        ".folders": [
+            "subfolder"
+        ]
+    }
+    
+**Example C3 : use patterns/format for `date` and `size`
+    
+    var folderContents = require('folder-contents');
+    
+    var options = {
+        "path":"./test",
+        "date":"yyyy/mm/dd - HH:MM:ss",
+        "size":{
+            "b":" B...",
+            "kb":" kB...",
+            "mb":" mB...",
+            "gb":" gB...",
+            "tb":" tB..."
+        }
+    };
+
+    var result = folderContents(options);
+    console.log(JSON.stringify(result));
 
     // Log result :
     {
-        "htaccess": [
+        ".files": [
             {
                 "path": "./test/",
                 "name": "",
                 "ext": "htaccess",
-                "size": 421
-            }
-        ],
-        "html": [
+                "size": "421 B...",
+                "atime": "2014/06/06 - 15:26:51",
+                "mtime": "2014/06/06 - 15:26:51",
+                "ctime": "2014/06/06 - 15:26:40"
+            },
             {
                 "path": "./test/",
-                "name": "index",
-                "ext": "html",
-                "size": 1422
+                "name": "photo",
+                "ext": "JPG",
+                "size": "2.63 mB...",
+                "atime": "2014/06/06 - 15:29:34",
+                "mtime": "2008/07/22 - 12:31:03",
+                "ctime": "2014/06/06 - 15:29:34"
             }
         ],
-        "plist": [
-            {
-                "path": "./test/",
-                "name": "manifest",
-                "ext": "plist",
-                "size": 726
-            }
-        ],
-        "": [
-            {
-                "path": "./test/",
-                "name": "noExtFile",
-                "ext": "",
-                "size": 0
-            }
-        ],
-        "docx": [
-            {
-                "path": "./test/",
-                "name": "release",
-                "ext": "docx",
-                "size": 17233
-            }
-        ],
-        "mkv": [
-            {
-                "path": "./test/subfolder/",
-                "name": "film.vostvo.team-yo",
-                "ext": "mkv",
-                "size": 703836104
-            }
+        ".folders": [
+            "subfolder"
         ]
     }
-
-**Where in file result :**
-
-* `path` : parent folder of file.
-* `name` : file name (without extension).
-* `ext` : file extension.
-* `size` : file size.
-* `fpath` : parent folder, full file name and extension.
-* `atime` : see [Linux info page][2]
-* `ctime` : see [Linux info page][2]
-* `mtime` : see [Linux info page][2]
 
 
 Versions
 =========
+
+Now next versions will be optimized or debugging versions 1.0.x
+
+**v 1.0.0 - 2014/06/10**
+
+* Lot of fixs, changes and optimizations since 0.1.0 version. 
+* Please read documentation
+* Add option `recursively`. Default is false !!!
+* Fix very hot bug in option path copy in recursive function...
+* In conclusion this version will suit many uses.
 
 **v 0.1.0 - 2014/06/08**
 
@@ -331,3 +595,4 @@ Versions
 
   [1]: https://www.npmjs.org/package/dateformat
   [2]: http://www.linux-faqs.info/general/difference-between-mtime-ctime-and-atime
+  [3]: https://www.npmjs.org/package/bytes-i18n

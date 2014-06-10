@@ -1,7 +1,7 @@
 {
   "name": "folder-contents",
-  "version": "0.1.0",
-  "description": "Get list of files recursively in the specified folder with options",
+  "version": "1.0.0",
+  "description": "List the contents of a folder recursively or not. Use the options.",
   "homepage": "https://github.com/npm-bdream/folder-contents",
   "main": "./lib/app.js",
   "scripts": {
@@ -16,14 +16,23 @@
     "dir",
     "content",
     "recursive",
+    "recursively",
     "list",
     "json",
     "file",
+    "path",
     "extention",
     "name",
     "path",
     "bytes",
-    "i18n"
+    "byte",
+    "i18n",
+    "date",
+    "dates",
+    "format",
+    "filter",
+    "ignore",
+    "accept"
   ],
   "license": "",
   "dependencies": {
