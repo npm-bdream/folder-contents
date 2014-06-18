@@ -17,12 +17,13 @@ With options
         "separator":".",
         "recursively":false,
         "method":"simple",
+        "useBasePath":true,
         "filter":{
             "extensionIgnore":[],
             "extensionAccept":[],
             "folderIgnore":[],
             "fileIgnore":[]
-        }
+        },
         "date":true, // See doc for patterns and i18n
         "size":true, // See doc for patterns and i18n
         "useFullPath":false
@@ -57,6 +58,11 @@ Details for options
 * `simpleExtension` : return simple json object with list(s) of file(s) by extension.
 * `simplePath` : return simple json object with list(s) of file(s) by folder.
 * `complexPath` : return complex json structure based on path (More operations).
+
+**`useBasePath` :** *( bool )*
+
+* default to **`true`**. If set at **`false`**, base path is not returned in result.
+* for example if you list **`./test`** as root folder, **`./test`** will not appear in file **`"path"`** and **`"fpath"`** values
 
 **`filter.extensionIgnore`** : *( JSON.[ ] )* 
 
@@ -156,7 +162,7 @@ In this exemple, options are sames because we don't use recursivity
         {
             ".files": [
                 {
-                    "path": "./test/",
+                    "path": "./test",
                     "name": "",
                     "ext": "htaccess",
                     "size": 421,
@@ -165,7 +171,7 @@ In this exemple, options are sames because we don't use recursivity
                     "ctime": 1402061200000
                 },
                 {
-                    "path": "./test/",
+                    "path": "./test",
                     "name": "photo",
                     "ext": "JPG",
                     "size": 2760113,
@@ -194,7 +200,7 @@ In this exemple, options are sames because we don't use recursivity
     {
         "htaccess": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "",
                 "ext": "htaccess",
                 "size": 421,
@@ -205,7 +211,7 @@ In this exemple, options are sames because we don't use recursivity
         ],
         "JPG": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "photo",
                 "ext": "JPG",
                 "size": 2760113,
@@ -240,7 +246,7 @@ Examples for recursive config
     // Log result :
     [
         {
-            "path": "./test/",
+            "path": "./test",
             "name": "",
             "ext": "htaccess",
             "size": 421,
@@ -249,7 +255,7 @@ Examples for recursive config
             "ctime": 1402061200000
         },
         {
-            "path": "./test/",
+            "path": "./test",
             "name": "photo",
             "ext": "JPG",
             "size": 2760113,
@@ -258,7 +264,7 @@ Examples for recursive config
             "ctime": 1402061374000
         },
         {
-            "path": "./test/subfolder/",
+            "path": "./test/subfolder",
             "name": "film",
             "ext": "mkv",
             "size": 703836104,
@@ -285,7 +291,7 @@ Examples for recursive config
     {
         "htaccess": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "",
                 "ext": "htaccess",
                 "size": 421,
@@ -296,7 +302,7 @@ Examples for recursive config
         ],
         "JPG": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "photo",
                 "ext": "JPG",
                 "size": 2760113,
@@ -307,7 +313,7 @@ Examples for recursive config
         ],
         "mkv": [
             {
-                "path": "./test/subfolder/",
+                "path": "./test/subfolder",
                 "name": "film",
                 "ext": "mkv",
                 "size": 703836104,
@@ -335,7 +341,7 @@ Examples for recursive config
     {
         "./test/": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "",
                 "ext": "htaccess",
                 "size": 421,
@@ -344,7 +350,7 @@ Examples for recursive config
                 "ctime": 1402061200000
             },
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "photo",
                 "ext": "JPG",
                 "size": 2760113,
@@ -355,7 +361,7 @@ Examples for recursive config
         ],
         "./test/subfolder/": [
             {
-                "path": "./test/subfolder/",
+                "path": "./test/subfolder",
                 "name": "film",
                 "ext": "mkv",
                 "size": 703836104,
@@ -385,7 +391,7 @@ Examples for recursive config
             "test": {
                 ".files": [
                     {
-                        "path": "./test/",
+                        "path": "./test",
                         "name": "",
                         "ext": "htaccess",
                         "size": 421,
@@ -394,7 +400,7 @@ Examples for recursive config
                         "ctime": 1402061200000
                     },
                     {
-                        "path": "./test/",
+                        "path": "./test",
                         "name": "photo",
                         "ext": "JPG",
                         "size": 2760113,
@@ -406,7 +412,7 @@ Examples for recursive config
                 "subfolder": {
                     ".files": [
                         {
-                            "path": "./test/subfolder/",
+                            "path": "./test/subfolder",
                             "name": "film",
                             "ext": "mkv",
                             "size": 703836104,
@@ -457,7 +463,7 @@ You can see fpath value in json result and `jpg` file in no longer returned.
     {
     ".files": [
         {
-            "path": "./test/",
+            "path": "./test",
             "name": "",
             "ext": "htaccess",
             "fpath": "./test/.htaccess",
@@ -491,12 +497,12 @@ Case for minimum informations
     {
         ".files": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "",
                 "ext": "htaccess"
             },
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "photo",
                 "ext": "JPG"
             }
@@ -506,7 +512,7 @@ Case for minimum informations
         ]
     }
     
-**Example C3 : use patterns/format for `date` and `size`
+**Example C3 : use patterns/format for `date` and `size`**
     
     var folderContents = require('folder-contents');
     
@@ -529,7 +535,7 @@ Case for minimum informations
     {
         ".files": [
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "",
                 "ext": "htaccess",
                 "size": "421 B...",
@@ -538,7 +544,7 @@ Case for minimum informations
                 "ctime": "2014/06/06 - 15:26:40"
             },
             {
-                "path": "./test/",
+                "path": "./test",
                 "name": "photo",
                 "ext": "JPG",
                 "size": "2.63 mB...",
@@ -552,11 +558,66 @@ Case for minimum informations
         ]
     }
 
+**Example C4 : set **`useBasePath`** to false
+
+        var folderContents = require('folder-contents');
+
+        var options = {
+            "path":"./test",
+            "useBasePath":false,
+            "recursively":true
+        };
+
+        var result = folderContents(options);
+        console.log(JSON.stringify(result));
+
+        // Log result :
+        [
+            {
+                "path": "/",
+                "name": "",
+                "ext": "htaccess",
+                "size": 421,
+                "atime": 1402061211000,
+                "mtime": 1402061211000,
+                "ctime": 1402061200000
+            },
+            {
+                "path": "/",
+                "name": "photo",
+                "ext": "JPG",
+                "size": 2760113,
+                "atime": 1402061374000,
+                "mtime": 1216722663000,
+                "ctime": 1402061374000
+            },
+            {
+                "path": "/subfolder",
+                "name": "film",
+                "ext": "mkv",
+                "size": 703836104,
+                "atime": 1402061717000,
+                "mtime": 1369822031000,
+                "ctime": 1402061717000
+            }
+        ]
 
 Versions
 =========
 
-Now next versions will be optimized or debugging versions 1.0.x
+**v 1.1.0 - 2014/06/18**
+
+I am working on my other project (folder-to-ui),and I use this package.
+So I found improvements that are not backward compatible.
+
+* In listed files, I change **`"path"`** value content for json result.
+    * I don't add end **`/`** so **`./test/`** will now **`./test`** in json result
+* It is now possible to set **`useBasePath`** option to false
+    * if **`useBasePath`** set to false, **`path`** and **`fpath`** will change in json result
+    * **`path`** for **`./test`** will be **`/`** if root folder is `./test`
+    * **`path`** for **`./test/subfolder`** will be **`/subfolder`** if root folder is `./test`
+    * As you can see if listed file is in root folder I add **`/`**. Only case with end **`/`**
+    * For this option you can see Examples B1 and C4 to compare differences.
 
 **v 1.0.0 - 2014/06/10**
 

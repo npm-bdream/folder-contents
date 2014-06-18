@@ -1,6 +1,6 @@
 {
   "name": "folder-contents",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "List the contents of a folder recursively or not. Use the options.",
   "homepage": "https://github.com/npm-bdream/folder-contents",
   "main": "./lib/app.js",
